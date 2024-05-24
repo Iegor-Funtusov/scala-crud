@@ -1,12 +1,11 @@
 package dao
 
-import bd.{BDStorage, CSVStorage}
 import entity.Student
+import storage.{CSVStorage, Storage}
 
 class StudentDaoImpl extends StudentDao {
 
-  private var students: List[Student] = List()
-  private val storage: BDStorage = CSVStorage()
+  private val storage: Storage = CSVStorage()
 
   override def create(student: Student): Unit = storage.create(student)
 

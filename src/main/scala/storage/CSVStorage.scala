@@ -1,55 +1,22 @@
-package bd
+package storage
 
 import com.opencsv.{CSVReader, CSVWriter}
 import com.opencsv.exceptions.CsvException
 import entity.Student
 
-import java.io.{FileReader, FileWriter, IOException}
-import java.util.UUID
-import scala.annotation.tailrec
+import java.io.{File, FileReader, FileWriter, IOException}
 import scala.jdk.CollectionConverters.*
 
-class CSVStorage extends BDStorage {
+class CSVStorage extends FileStorage {
 
-  private var students: List[Student] = List()
   private val STUDENT_CSV: String = "students.csv"
+  private val fileStorage: File = File(STUDENT_CSV)
 
-  override def create(student: Student): Unit =
-    readCSV()
-    students = Student(
-      generateId(),
-      student.firstName, student.lastName, student.age
-    ) +: students
-    writeCSV()
-
-  override def update(student: Student): Unit =
-    readCSV()
-    students = students.updated(
-      students.indexWhere(element => element.id == student.id),
-      student
-    )
-    writeCSV()
-
-  override def delete(id: String): Unit =
-    readCSV()
-    students = students.filterNot(student => student.id == id)
-    writeCSV()
-
-  override def findAll(): List[Student] = {
-    readCSV()
-    students
+  {
+    if !fileStorage.exists() then fileStorage.createNewFile()
   }
 
-  override def findById(id: String): Option[Student] =
-    readCSV()
-    students.find(student => student.id == id)
-
-  @tailrec
-  private def generateId(): String =
-    val id = UUID.randomUUID().toString
-    if (students.exists(s => s.id == id)) generateId() else id
-
-  private def readCSV(): Unit = {
+  override def readStudentsFromFile(): Unit = {
     try {
       val reader: CSVReader = CSVReader(FileReader(STUDENT_CSV))
       students = List()
@@ -63,7 +30,7 @@ class CSVStorage extends BDStorage {
     }
   }
 
-  private def writeCSV(): Unit = {
+  override def writeStudentsToFile(): Unit = {
     try {
       val writer: CSVWriter = CSVWriter(FileWriter(STUDENT_CSV))
       var list: List[Array[String]] = List()
