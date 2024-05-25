@@ -1,12 +1,23 @@
 package storage
 
 import entity.Student
+import factory.StorageFactory
+
+import java.io.File
 import java.util.UUID
 import scala.annotation.tailrec
 
 trait FileStorage extends Storage {
 
   protected var students: List[Student] = List()
+  protected var STUDENT_FILE: String = "students."
+
+  {
+    val format = StorageFactory.getFormat
+    STUDENT_FILE = STUDENT_FILE + format
+    val storage = File(STUDENT_FILE)
+    if !storage.exists() then storage.createNewFile()
+  }
 
   override def create(student: Student): Unit =
     readStudentsFromFile()

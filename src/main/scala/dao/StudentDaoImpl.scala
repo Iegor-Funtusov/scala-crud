@@ -1,11 +1,12 @@
 package dao
 
 import entity.Student
-import storage.{CSVStorage, Storage}
+import factory.StorageFactory
+import storage.Storage
 
 class StudentDaoImpl extends StudentDao {
 
-  private val storage: Storage = CSVStorage()
+  private val storage: Storage = StorageFactory.getStorage
 
   override def create(student: Student): Unit = storage.create(student)
 

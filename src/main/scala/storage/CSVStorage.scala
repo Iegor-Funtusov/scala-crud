@@ -4,21 +4,14 @@ import com.opencsv.{CSVReader, CSVWriter}
 import com.opencsv.exceptions.CsvException
 import entity.Student
 
-import java.io.{File, FileReader, FileWriter, IOException}
+import java.io.{FileReader, FileWriter, IOException}
 import scala.jdk.CollectionConverters.*
 
 class CSVStorage extends FileStorage {
-
-  private val STUDENT_CSV: String = "students.csv"
-  private val fileStorage: File = File(STUDENT_CSV)
-
-  {
-    if !fileStorage.exists() then fileStorage.createNewFile()
-  }
-
+  
   override def readStudentsFromFile(): Unit = {
     try {
-      val reader: CSVReader = CSVReader(FileReader(STUDENT_CSV))
+      val reader: CSVReader = CSVReader(FileReader(STUDENT_FILE))
       students = List()
       val list = reader.readAll()
       list.asScala.toList.foreach(el =>
@@ -32,7 +25,7 @@ class CSVStorage extends FileStorage {
 
   override def writeStudentsToFile(): Unit = {
     try {
-      val writer: CSVWriter = CSVWriter(FileWriter(STUDENT_CSV))
+      val writer: CSVWriter = CSVWriter(FileWriter(STUDENT_FILE))
       var list: List[Array[String]] = List()
       students.foreach(student => {
         val str = Array(student.id, student.firstName, student.lastName, student.age.toString)
